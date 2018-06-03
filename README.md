@@ -1,6 +1,6 @@
 # Brainfuck-interpreter
 - Written by masm 32bits assembly
-- Develop environment on visual studio 2017
+- Develop environment on visual studio 2017, using [Irvine library](http://kipirvine.com/asm/gettingStartedVS2017/index.htm)
 - Try some example in brainfuck-example directory
 
 # Program processing flow
