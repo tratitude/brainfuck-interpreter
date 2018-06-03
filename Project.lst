@@ -1,9 +1,7 @@
-Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/03/18 16:13:26
+Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/03/18 16:30:29
 main.asm						     Page 1 - 1
 
 
-				; AddTwo.asm - adds two 32-bit integers.
-				; Chapter 3 example
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -22,24 +20,50 @@ main.asm						     Page 1 - 1
 			      C .NOLIST
 			      C .LIST
 			      C 
+
 				.386
 				.model flat,stdcall
-main.asm(5) : warning A4011:multiple .MODEL directives found : .MODEL ignored
+main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 				.stack 4096
-				ExitProcess proto,dwExitCode:dword
+				ExitProcess PROTO, dwExitCode: DWORD
+
+ 00000000			.data
+ = 00001000			MAX = 4096
+ 00000000 00000000		inputHandle HANDLE ?
+ 00000004  00000050 [		fileName BYTE 80 DUP(?)
+	    00
+	   ]
+ 00000054  00001000 [		buffer BYTE MAX DUP(?)
+	    00
+	   ]
+ 00001054 00000000		bytesRead DWORD ?
 
  00000000			.code
  00000000			main proc
- 00000000  B8 00000005			mov	eax,5				
- 00000005  83 C0 06			add	eax,6				
+ 00000000  BA 00000004 R		mov edx, OFFSET fileName
+ 00000005  B9 00000050			mov ecx, SIZEOF fileName
+ 0000000A  E8 00000000 E		call ReadString
 
- 00000008  E8 00000000 E	     call WaitMsg
+ 0000000F  BA 00000004 R		mov edx, OFFSET fileName
+ 00000014  E8 00000000 E		call OpenInputFile
+ 00000019  A3 00000000 R		mov inputHandle, eax
+					
+ 0000001E  A1 00000000 R		mov eax, inputHandle
+ 00000023  BA 00000054 R		mov edx, OFFSET buffer
+ 00000028  B9 00001000			mov ecx, SIZEOF buffer
+ 0000002D  E8 00000000 E		call ReadFromFile
+ 00000032  A3 00001054 R		mov bytesRead, eax
+
+ 00000037  BA 00000054 R		mov edx, OFFSET buffer
+ 0000003C  E8 00000000 E		call WriteString
+
+ 00000041  E8 00000000 E	    call WaitMsg
 					invoke ExitProcess,0
- 0000000D  6A 00	   *	    push   +000000000h
- 0000000F  E8 00000000 E   *	    call   ExitProcess
- 00000014			main endp
+ 00000046  6A 00	   *	    push   +000000000h
+ 00000048  E8 00000000 E   *	    call   ExitProcess
+ 0000004D			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/03/18 16:13:26
+Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/03/18 16:30:29
 main.asm						     Symbols 2 - 1
 
 
@@ -133,15 +157,14 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000014 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00001058 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004D Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-ADDSUM . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -242,7 +265,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000014 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004D Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -334,6 +357,7 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+MAX  . . . . . . . . . . . . . .	Number	 00001000h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -464,10 +488,14 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+buffer . . . . . . . . . . . . .	Byte	 00000054 _DATA	
+bytesRead  . . . . . . . . . . .	DWord	 00001054 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+fileName . . . . . . . . . . . .	Byte	 00000004 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+inputHandle  . . . . . . . . . .	DWord	 00000000 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
