@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/03/18 16:30:29
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/03/18 16:54:09
 main.asm						     Page 1 - 1
 
 
@@ -63,7 +63,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000048  E8 00000000 E   *	    call   ExitProcess
  0000004D			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/03/18 16:30:29
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/03/18 16:54:09
 main.asm						     Symbols 2 - 1
 
 
@@ -165,6 +165,7 @@ Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
+ADDSUM . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
