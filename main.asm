@@ -9,7 +9,7 @@ ExitProcess PROTO, dwExitCode: DWORD
 MAX = 4096
 inputHandle HANDLE ?
 fileName BYTE 80 DUP(?)
-buffer BYTE MAX DUP(?)
+buffer BYTE MAX DUP(?)	
 bytesRead DWORD ?
 
 .code
@@ -30,7 +30,7 @@ main proc
 
 	mov edx, OFFSET buffer
 	call WriteString
-
+	call crlf
     call WaitMsg
 	invoke ExitProcess,0
 main endp
