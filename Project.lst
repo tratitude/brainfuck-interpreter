@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 18:16:00
+Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 18:26:45
 main.asm						     Page 1 - 1
 
 
@@ -154,7 +154,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  000000BA  E8 00000000 E   *	    call   ExitProcess
  000000BF			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 18:16:00
+Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 18:26:45
 main.asm						     Symbols 2 - 1
 
 
