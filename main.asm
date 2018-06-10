@@ -140,7 +140,6 @@ Loop1:
      .ELSEIF al == ','
           call ReadChar
 		  call writechar
-		  call crlf
           mov ebx, executeMemoryLocation
           mov[ebx], al
           jmp CodeLoop
