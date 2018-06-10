@@ -13,6 +13,7 @@ buffer BYTE MAX DUP(?)
 bytesRead DWORD ?
 AfterSyntaxCheck BYTE Max DUP(?)
 ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
+ErrMsg BYTE "括號數量不對稱",0
 .code
 
 SyntaxCheck proc 
@@ -20,9 +21,18 @@ SyntaxCheck proc
 	mov ecx,SIZEOF buffer
 	mov esi,OFFSET buffer
 	mov edi,OFFSET AfterSyntaxCheck
+	mov edx,0
 	L1:
 		mov al,[esi]
-		;call WriteChar
+		.IF al=='['
+				inc dh
+		.ELSEIF al==']'
+				inc dl
+		.ENDIF
+		.IF dl>dh
+			jmp Err	
+		.ENDIF
+		
 		inc esi
 		push esi
 		push ecx
@@ -30,8 +40,6 @@ SyntaxCheck proc
 		mov esi,OFFSET ValidCharacter
 		L2:
 			mov bl,[esi]
-			;mov al,
-			;call WriteChar
 			inc esi
 			cmp	al,bl
 			jne InValid
@@ -48,6 +56,11 @@ SyntaxCheck proc
 	loop L1
 	mov bl,0
 	mov [edi],bl
+	.IF dl!=dh
+		Err:
+		mov edx,OFFSET ErrMsg
+		call WriteString
+	.ENDIF
 	ret
 SyntaxCheck endp
 

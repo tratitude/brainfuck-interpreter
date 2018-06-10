@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/10/18 16:36:13
+Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 17:35:00
 main.asm						     Page 1 - 1
 
 
@@ -42,6 +42,9 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 	   ]
  00002058 5B 5D 2B 2D 3C	ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
 	   3E 2C 2E
+ 00002060 AC 41 B8 B9 BC	ErrMsg BYTE "括號數量不對稱",0
+	   C6 B6 71 A4 A3
+	   B9 EF BA D9 00
  00000000			.code
 
  00000000			SyntaxCheck proc 
@@ -49,82 +52,108 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000000  B9 00001000			mov ecx,SIZEOF buffer
  00000005  BE 00000054 R		mov esi,OFFSET buffer
  0000000A  BF 00001058 R		mov edi,OFFSET AfterSyntaxCheck
- 0000000F				L1:
- 0000000F  8A 06				mov al,[esi]
-						;call WriteChar
- 00000011  46					inc esi
- 00000012  56					push esi
- 00000013  51					push ecx
- 00000014  B9 00000008				mov ecx,8
- 00000019  BE 00002058 R			mov esi,OFFSET ValidCharacter
- 0000001E					L2:
- 0000001E  8A 1E					mov bl,[esi]
-							;mov al,
-							;call WriteChar
- 00000020  46						inc esi
- 00000021  3A C3					cmp	al,bl
- 00000023  75 05					jne InValid
+ 0000000F  BA 00000000			mov edx,0
+ 00000014				L1:
+ 00000014  8A 06				mov al,[esi]
+						.IF al=='['
+ 00000016  3C 5B	   *	    cmp    al, '['
+ 00000018  75 04	   *	    jne    @C0001
+ 0000001A  FE C6						inc dh
+						.ELSEIF al==']'
+ 0000001C  EB 06	   *	    jmp    @C0003
+ 0000001E		   *@C0001:
+ 0000001E  3C 5D	   *	    cmp    al, ']'
+ 00000020  75 02	   *	    jne    @C0004
+ 00000022  FE C2						inc dl
+						.ENDIF
+ 00000024		   *@C0004:
+ 00000024		   *@C0003:
+						.IF dl>dh
+ 00000024  3A D6	   *	    cmp    dl, dh
+ 00000026  76 02	   *	    jbe    @C0006
+ 00000028  EB 27					jmp Err	
+						.ENDIF
+ 0000002A		   *@C0006:
+						
+ 0000002A  46					inc esi
+ 0000002B  56					push esi
+ 0000002C  51					push ecx
+ 0000002D  B9 00000008				mov ecx,8
+ 00000032  BE 00002058 R			mov esi,OFFSET ValidCharacter
+ 00000037					L2:
+ 00000037  8A 1E					mov bl,[esi]
+ 00000039  46						inc esi
+ 0000003A  3A C3					cmp	al,bl
+ 0000003C  75 05					jne InValid
 
- 00000025  56						push esi
- 00000026  88 1F					mov [edi],bl
- 00000028  47						inc edi
- 00000029  5E						pop esi
+ 0000003E  56						push esi
+ 0000003F  88 1F					mov [edi],bl
+ 00000041  47						inc edi
+ 00000042  5E						pop esi
 							;call WaitMsg
- 0000002A						InValid:
- 0000002A  E2 F2				loop L2
- 0000002C  59					pop ecx
- 0000002D  5E					pop esi
- 0000002E  E2 DF			loop L1
- 00000030  B3 00			mov bl,0
- 00000032  88 1F			mov [edi],bl
- 00000034  C3				ret
- 00000035			SyntaxCheck endp
+ 00000043						InValid:
+ 00000043  E2 F2				loop L2
+ 00000045  59					pop ecx
+ 00000046  5E					pop esi
+ 00000047  E2 CB			loop L1
+ 00000049  B3 00			mov bl,0
+ 0000004B  88 1F			mov [edi],bl
+					.IF dl!=dh
+ 0000004D  3A D6	   *	    cmp    dl, dh
+ 0000004F  74 0A	   *	    je	@C0008
+ 00000051					Err:
+ 00000051  BA 00002060 R			mov edx,OFFSET ErrMsg
+ 00000056  E8 00000000 E			call WriteString
+					.ENDIF
+ 0000005B		   *@C0008:
+ 0000005B  C3				ret
+ 0000005C			SyntaxCheck endp
 
 
 				;-------------------------------------------------------------
- 00000035			ReadFileName proc uses eax ecx edx
+ 0000005C			ReadFileName proc uses eax ecx edx
 				;
 				; Read a file content into buffer string.
 				;-------------------------------------------------------------
- 00000035  50		   *	    push   eax
- 00000036  51		   *	    push   ecx
- 00000037  52		   *	    push   edx
- 00000038  BA 00000004 R		mov edx, OFFSET fileName
- 0000003D  B9 00000050			mov ecx, SIZEOF fileName
- 00000042  E8 00000000 E		call ReadString
+ 0000005C  50		   *	    push   eax
+ 0000005D  51		   *	    push   ecx
+ 0000005E  52		   *	    push   edx
+ 0000005F  BA 00000004 R		mov edx, OFFSET fileName
+ 00000064  B9 00000050			mov ecx, SIZEOF fileName
+ 00000069  E8 00000000 E		call ReadString
 
- 00000047  BA 00000004 R		mov edx, OFFSET fileName
- 0000004C  E8 00000000 E		call OpenInputFile
+ 0000006E  BA 00000004 R		mov edx, OFFSET fileName
+ 00000073  E8 00000000 E		call OpenInputFile
 
- 00000051  BA 00000054 R		mov edx, OFFSET buffer
- 00000056  B9 00001000			mov ecx, SIZEOF buffer
- 0000005B  E8 00000000 E		call ReadFromFile
- 00000060  A3 00001054 R		mov bytesRead, eax
+ 00000078  BA 00000054 R		mov edx, OFFSET buffer
+ 0000007D  B9 00001000			mov ecx, SIZEOF buffer
+ 00000082  E8 00000000 E		call ReadFromFile
+ 00000087  A3 00001054 R		mov bytesRead, eax
 					ret
- 00000065  5A		   *	    pop    edx
- 00000066  59		   *	    pop    ecx
- 00000067  58		   *	    pop    eax
- 00000068  C3		   *	    ret    00000h
- 00000069			ReadFileName endp
+ 0000008C  5A		   *	    pop    edx
+ 0000008D  59		   *	    pop    ecx
+ 0000008E  58		   *	    pop    eax
+ 0000008F  C3		   *	    ret    00000h
+ 00000090			ReadFileName endp
 
 
 
- 00000069			main proc
+ 00000090			main proc
 					
- 00000069  E8 FFFFFFC7			call ReadFileName
- 0000006E  BA 00000054 R		mov edx, OFFSET buffer
- 00000073  E8 FFFFFF88			call SyntaxCheck
- 00000078  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
- 0000007D  B9 00001000			mov ecx, SIZEOF AfterSyntaxCheck
- 00000082  E8 00000000 E		call WriteString
- 00000087  E8 00000000 E		call crlf
- 0000008C  E8 00000000 E	    call WaitMsg
+ 00000090  E8 FFFFFFC7			call ReadFileName
+ 00000095  BA 00000054 R		mov edx, OFFSET buffer
+ 0000009A  E8 FFFFFF61			call SyntaxCheck
+ 0000009F  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
+ 000000A4  B9 00001000			mov ecx, SIZEOF AfterSyntaxCheck
+ 000000A9  E8 00000000 E		call WriteString
+ 000000AE  E8 00000000 E		call crlf
+ 000000B3  E8 00000000 E	    call WaitMsg
 					invoke ExitProcess,0
- 00000091  6A 00	   *	    push   +000000000h
- 00000093  E8 00000000 E   *	    call   ExitProcess
- 00000098			main endp
+ 000000B8  6A 00	   *	    push   +000000000h
+ 000000BA  E8 00000000 E   *	    call   ExitProcess
+ 000000BF			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/10/18 16:36:13
+Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 17:35:00
 main.asm						     Symbols 2 - 1
 
 
@@ -218,8 +247,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00002060 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000098 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000206F Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000BF Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -260,6 +289,7 @@ GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HW . . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -281,7 +311,7 @@ ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadDec  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadFileName . . . . . . . . . .	P Near	 00000035 _TEXT	Length= 00000034 Public STDCALL
+ReadFileName . . . . . . . . . .	P Near	 0000005C _TEXT	Length= 00000034 Public STDCALL
 ReadFile . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadFloat  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadFromFile . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -308,10 +338,11 @@ Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-SyntaxCheck  . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000035 Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 0000000F _TEXT	
-  L2 . . . . . . . . . . . . . .	L Near	 0000001E _TEXT	
-  InValid  . . . . . . . . . . .	L Near	 0000002A _TEXT	
+SyntaxCheck  . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000005C Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000014 _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 00000037 _TEXT	
+  InValid  . . . . . . . . . . .	L Near	 00000043 _TEXT	
+  Err  . . . . . . . . . . . . .	L Near	 00000051 _TEXT	
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -331,7 +362,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000069 _TEXT	Length= 0000002F Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000090 _TEXT	Length= 0000002F Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -366,6 +397,7 @@ ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h
 ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
 ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
 ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
+ErrMsg . . . . . . . . . . . . .	Byte	 00002060 _DATA	
 FALSE  . . . . . . . . . . . . .	Number	 00000000h   
 FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
 FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
