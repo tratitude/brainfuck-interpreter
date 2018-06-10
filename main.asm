@@ -15,7 +15,7 @@ AfterSyntaxCheck BYTE Max DUP(?)
 ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
 .code
 
-SyntaxCheck proc
+SyntaxCheck proc 
 	; []+-.<>,
 	mov ecx,SIZEOF buffer
 	L1:
@@ -33,20 +33,30 @@ SyntaxCheck proc
 	loop L1
 SyntaxCheck endp
 
-main proc
+
+;-------------------------------------------------------------
+ReadFile proc uses eax, ecx, edx
+;
+; Read a file content into buffer string.
+;-------------------------------------------------------------
 	mov edx, OFFSET fileName
 	mov ecx, SIZEOF fileName
 	call ReadString
 
 	mov edx, OFFSET fileName
 	call OpenInputFile
-	mov inputHandle, eax
-	
-	mov eax, inputHandle
+
 	mov edx, OFFSET buffer
 	mov ecx, SIZEOF buffer
 	call ReadFromFile
 	mov bytesRead, eax
+	
+ReadFile endp
+
+
+
+main proc
+	
 
 	mov edx, OFFSET buffer
 	call SyntaxCheck
