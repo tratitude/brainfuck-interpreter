@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 23:41:13
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/11/18 01:33:31
 main.asm						     Page 1 - 1
 
 
@@ -46,16 +46,42 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 	   C6 B6 71 A4 A3
 	   B9 EF BA D9 0A
 	   0D 00
-
+ 00002071 49 6E 70 75 74	dirMsg BYTE "Input .bf's dir", 0
+	   20 2E 62 66 27
+	   73 20 64 69 72
+	   00
+ 00002081 48 65 79 20 67	welcomeMsg BYTE "Hey guys this is Brain Fuck, let's fucking your brain", 0
+	   75 79 73 20 74
+	   68 69 73 20 69
+	   73 20 42 72 61
+	   69 6E 20 46 75
+	   63 6B 2C 20 6C
+	   65 74 27 73 20
+	   66 75 63 6B 69
+	   6E 67 20 79 6F
+	   75 72 20 62 72
+	   61 69 6E 00
+ 000020B7 41 75 74 68 6F	authMsg BYTE "Authors: fdmdkw, NerovaRiuzGX, weiber-hsu, Ridost ", 0
+	   72 73 3A 20 66
+	   64 6D 64 6B 77
+	   2C 20 4E 65 72
+	   6F 76 61 52 69
+	   75 7A 47 58 2C
+	   20 77 65 69 62
+	   65 72 2D 68 73
+	   75 2C 20 52 69
+	   64 6F 73 74 20
+	   00
+ 000020EA 3E 3E 3E 20 00	interpretMsg BYTE ">>> ",0
 				;------------------------------
-				; ExecuteCode proceduce used variable
- 00002071  00001000 [		executeMemory BYTE MAX DUP(0)
+				; BFInterpret proceduce used variable
+ 000020EF  00001000 [		executeMemory BYTE MAX DUP(0)
 	    00
 	   ]
- 00003071 00000000		executeMemoryLocation DWORD ?
- 00003075 00000000		codeLocation DWORD ?
- 00003079 00			whileCheck SBYTE ?
- 0000307A 53 79 6E 74 61	whileError BYTE "Syntax Error: while",0
+ 000030EF 00000000		executeMemoryLocation DWORD ?
+ 000030F3 00000000		codeLocation DWORD ?
+ 000030F7 00			whileCheck SBYTE ?
+ 000030F8 53 79 6E 74 61	whileErrMsg BYTE "Syntax Error: while",0
 	   78 20 45 72 72
 	   6F 72 3A 20 77
 	   68 69 6C 65 00
@@ -159,12 +185,12 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 				; Return: Nothing
 				; -------------------
  00000090			BFInterpret proc
- 00000090  89 15 00003075 R		mov codeLocation, edx
- 00000096  B8 00002071 R		mov eax, OFFSET executeMemory
- 0000009B  A3 00003071 R		mov executeMemoryLocation, eax
+ 00000090  89 15 000030F3 R		mov codeLocation, edx
+ 00000096  B8 000020EF R		mov eax, OFFSET executeMemory
+ 0000009B  A3 000030EF R		mov executeMemoryLocation, eax
 
  000000A0			Loop1:
- 000000A0  A1 00003075 R	     mov eax, codeLocation
+ 000000A0  A1 000030F3 R	     mov eax, codeLocation
  000000A5  8A 00			mov al, [eax]
 					.IF al == 0
  000000A7  0A C0	   *	    or	al, al
@@ -175,25 +201,25 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  000000B5		   *@C000A:
  000000B5  3C 3E	   *	    cmp    al, '>'
  000000B7  75 17	   *	    jne    @C000D
- 000000B9  8B 1D 00003071 R			mov ebx, [executeMemoryLocation]
+ 000000B9  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
  000000BF  43					inc ebx
- 000000C0  89 1D 00003071 R			mov [executeMemoryLocation], ebx
+ 000000C0  89 1D 000030EF R			mov [executeMemoryLocation], ebx
  000000C6  E9 0000013D				jmp CodeLoop
 					.ELSEIF al == '<'
  000000CB  E9 000000D5	   *	    jmp    @C000F
  000000D0		   *@C000D:
  000000D0  3C 3C	   *	    cmp    al, '<'
  000000D2  75 17	   *	    jne    @C0010
- 000000D4  8B 1D 00003071 R			mov ebx, [executeMemoryLocation]
+ 000000D4  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
  000000DA  4B					dec ebx
- 000000DB  89 1D 00003071 R			mov [executeMemoryLocation], ebx
+ 000000DB  89 1D 000030EF R			mov [executeMemoryLocation], ebx
  000000E1  E9 00000122				jmp CodeLoop
 					.ELSEIF al == '+'
  000000E6  E9 000000BA	   *	    jmp    @C0012
  000000EB		   *@C0010:
  000000EB  3C 2B	   *	    cmp    al, '+'
  000000ED  75 15	   *	    jne    @C0013
- 000000EF  A1 00003071 R			mov eax, [executeMemoryLocation]
+ 000000EF  A1 000030EF R			mov eax, [executeMemoryLocation]
  000000F4  8A 18		          mov bl, [eax]
  000000F6  FE C3				inc bl
  000000F8  88 18				mov [eax], bl
@@ -203,7 +229,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000104		   *@C0013:
  00000104  3C 2D	   *	    cmp    al, '-'
  00000106  75 15	   *	    jne    @C0016
- 00000108  A1 00003071 R	          mov eax, [executeMemoryLocation]
+ 00000108  A1 000030EF R	          mov eax, [executeMemoryLocation]
  0000010D  8A 18		          mov bl, [eax]
  0000010F  FE CB		          dec bl
  00000111  88 18		          mov[eax], bl
@@ -213,7 +239,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  0000011D		   *@C0016:
  0000011D  3C 2E	   *	    cmp    al, '.'
  0000011F  75 14	   *	    jne    @C0019
- 00000121  8B 1D 00003071 R	          mov ebx, executeMemoryLocation
+ 00000121  8B 1D 000030EF R	          mov ebx, executeMemoryLocation
  00000127  8A 03				mov al, [ebx]
  00000129  E8 00000000 E			call WriteChar
  0000012E  E9 000000D5				jmp CodeLoop
@@ -224,7 +250,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000137  75 19	   *	    jne    @C001C
  00000139  E8 00000000 E	          call ReadChar
  0000013E  E8 00000000 E			  call writechar
- 00000143  8B 1D 00003071 R	          mov ebx, executeMemoryLocation
+ 00000143  8B 1D 000030EF R	          mov ebx, executeMemoryLocation
  00000149  88 03		          mov[ebx], al
  0000014B  E9 000000B8		          jmp CodeLoop
 					.ELSEIF al == '['
@@ -232,35 +258,35 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000152		   *@C001C:
  00000152  3C 5B	   *	    cmp    al, '['
  00000154  75 35	   *	    jne    @C001F
- 00000156  8B 1D 00003075 R			mov ebx, [codeLocation]
+ 00000156  8B 1D 000030F3 R			mov ebx, [codeLocation]
  0000015C  43					inc ebx
- 0000015D  89 1D 00003075 R	          mov [codeLocation], ebx
+ 0000015D  89 1D 000030F3 R	          mov [codeLocation], ebx
  00000163  8A 03		          mov al, [ebx]
  00000165  3C 5D				cmp al, ']'      ; nothing in while loop
  00000167  0F 84 0000009B			je CodeLoop
 						
- 0000016D  A1 00003071 R	          mov eax, [executeMemoryLocation]
+ 0000016D  A1 000030EF R	          mov eax, [executeMemoryLocation]
  00000172  8A 18		          mov bl, [eax]
  00000174  80 FB 00		          cmp bl, 0        ; jump out of while loop
  00000177  74 2C		          je FindEndWhile
 
- 00000179  8B 1D 00003075 R	          mov ebx, [codeLocation]
+ 00000179  8B 1D 000030F3 R	          mov ebx, [codeLocation]
  0000017F  4B			          dec ebx          ; decrease the addtional increasement
  00000180  53			          push ebx         ; push while loop instruction
- 00000181  89 1D 00003075 R	          mov [codeLocation], ebx
+ 00000181  89 1D 000030F3 R	          mov [codeLocation], ebx
  00000187  EB 7F				jmp CodeLoop
 					.ELSEIF al == ']'
  00000189  EB 1A	   *	    jmp    @C0021
  0000018B		   *@C001F:
  0000018B  3C 5D	   *	    cmp    al, ']'
  0000018D  75 16	   *	    jne    @C0022
- 0000018F  8B 1D 00003071 R			mov ebx, [executeMemoryLocation]
+ 0000018F  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
  00000195  8A 03		          mov al, [ebx]
  00000197  3C 00				cmp al, 0        ; jump out while loop
  00000199  74 6A				je PopCode
 						
  0000019B  5B					pop ebx
- 0000019C  89 1D 00003075 R			mov codeLocation, ebx
+ 0000019C  89 1D 000030F3 R			mov codeLocation, ebx
  000001A2  53					push ebx
  000001A3  EB 63				jmp CodeLoop
 					.ENDIF
@@ -275,17 +301,17 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  000001A5		   *@C000C:
 
  000001A5			FindEndWhile:           ; find end of while loop character ']'
- 000001A5  C6 05 00003079 R		mov [whileCheck], 1 ; initialize whileCheck=1
+ 000001A5  C6 05 000030F7 R		mov [whileCheck], 1 ; initialize whileCheck=1
 	   01
 					
  000001AC				Loop2:
- 000001AC  8B 1D 00003075 R			mov ebx, [codeLocation]
+ 000001AC  8B 1D 000030F3 R			mov ebx, [codeLocation]
  000001B2  8A 03		          mov al, [ebx]
 						.IF al == 0         ; if codeLocation = end of file(which initialized = 0)
  000001B4  0A C0	   *	    or	al, al
  000001B6  75 13	   *	    jne    @C0024
- 000001B8  BA 0000307A R				mov edx, OFFSET whileError
- 000001BD  E8 00000000 E				call WriteString
+ 000001B8  BA 000030F8 R				mov edx, OFFSET whileErrMsg
+ 000001BD  E8 00000000 E			call WriteString
  000001C2  E8 00000000 E				call Crlf
  000001C7  EB 51		               jmp Return
 						.ELSEIF al == '['   ; if codeLocation = '[', whileCheck = whileCheck +1
@@ -293,36 +319,36 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  000001CB		   *@C0024:
  000001CB  3C 5B	   *	    cmp    al, '['
  000001CD  75 10	   *	    jne    @C0027
- 000001CF  8A 1D 00003079 R	               mov bl, [whileCheck]
+ 000001CF  8A 1D 000030F7 R	               mov bl, [whileCheck]
  000001D5  FE C3		               inc bl
- 000001D7  88 1D 00003079 R	               mov [whileCheck], bl
+ 000001D7  88 1D 000030F7 R	               mov [whileCheck], bl
 						.ELSEIF al == ']'
  000001DD  EB 17	   *	    jmp    @C0029
  000001DF		   *@C0027:
  000001DF  3C 5D	   *	    cmp    al, ']'
  000001E1  75 13	   *	    jne    @C002A
- 000001E3  8A 1D 00003079 R				mov bl, [whileCheck]
+ 000001E3  8A 1D 000030F7 R				mov bl, [whileCheck]
  000001E9  80 FB 01					cmp bl, 1       ; if codeLocation = ']' and whileCheck = 1, find the right ']'
  000001EC  74 1A					je CodeLoop
  000001EE  FE CB					dec bl          ; if codeLocation = ']' and whileCheck = 1, find the wrong ']', whileCheck = whileCheck -1
- 000001F0  88 1D 00003079 R				mov [whileCheck], bl
+ 000001F0  88 1D 000030F7 R				mov [whileCheck], bl
 						.ENDIF
  000001F6		   *@C002A:
  000001F6		   *@C0029:
  000001F6		   *@C0026:
  000001F6				Loop2EndIf:
- 000001F6  8B 1D 00003075 R			mov ebx, [codeLocation]
+ 000001F6  8B 1D 000030F3 R			mov ebx, [codeLocation]
  000001FC  43					inc ebx
- 000001FD  89 1D 00003075 R			mov [codeLocation], ebx
+ 000001FD  89 1D 000030F3 R			mov [codeLocation], ebx
  00000203  EB A7				jmp Loop2
 						
  00000205			PopCode:
  00000205  5B				pop ebx
  00000206  EB 00			jmp CodeLoop
  00000208			CodeLoop:
- 00000208  8B 1D 00003075 R		mov ebx, [codeLocation]
+ 00000208  8B 1D 000030F3 R		mov ebx, [codeLocation]
  0000020E  43			     inc ebx
- 0000020F  89 1D 00003075 R		mov [codeLocation], ebx
+ 0000020F  89 1D 000030F3 R		mov [codeLocation], ebx
  00000215  E9 FFFFFE86			jmp Loop1
  0000021A			Return:
  0000021A  C3				ret
@@ -330,20 +356,64 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 
 
  0000021B			main proc
+ 0000021B  BA 00002071 R		mov edx, OFFSET dirMsg
+ 00000220  E8 00000000 E		call WriteString
+ 00000225  E8 00000000 E	     call Crlf
 					
- 0000021B  E8 FFFFFE3C			call ReadFileName
- 00000220  BA 00000054 R		mov edx, OFFSET buffer
- 00000225  E8 FFFFFDD6			call SyntaxCheck
- 0000022A  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
- 0000022F  E8 FFFFFE5C			call BFInterpret
- 00000234  E8 00000000 E		call crlf
- 00000239  E8 00000000 E	    call WaitMsg
+ 0000022A  E8 FFFFFE2D			call ReadFileName
+ 0000022F  BA 00000054 R		mov edx, OFFSET buffer
+ 00000234  E8 FFFFFDC7			call SyntaxCheck
+ 00000239  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
+ 0000023E  E8 FFFFFE4D			call BFInterpret
+ 00000243  E8 00000000 E		call crlf
+					
+ 00000248  BA 00002081 R		mov edx, OFFSET welcomeMsg
+ 0000024D  E8 00000000 E		call WriteString
+ 00000252  E8 00000000 E		call Crlf
+ 00000257  BA 000020B7 R	     mov edx, OFFSET authMsg
+ 0000025C  E8 00000000 E		call WriteString
+ 00000261  E8 00000000 E		call Crlf
+ 00000266			Interpret:	
+ 00000266  E8 00000000 E		call Crlf
+ 0000026B  BA 000020EA R	     mov edx, OFFSET interpretMsg
+ 00000270  E8 00000000 E		call WriteString
+
+ 00000275  B9 00001000		     mov ecx, MAX
+ 0000027A			InitBuffer:
+ 0000027A  BE 00000054 R	     mov esi, OFFSET buffer
+ 0000027F  03 F1		     add esi, ecx
+ 00000281  4E			     dec esi
+ 00000282  B0 00		     mov al, 0
+ 00000284  88 06		     mov [esi], al
+ 00000286  E2 F2		     loop InitBuffer
+
+ 00000288  BA 00000054 R		mov edx, OFFSET buffer
+ 0000028D  B9 00001000			mov ecx, SIZEOF buffer
+ 00000292  E8 00000000 E		call ReadString
+					
+ 00000297  BE 00000054 R		mov esi, OFFSET buffer
+ 0000029C  8A 06		     mov al, [esi]
+					.IF al == 0
+ 0000029E  0A C0	   *	    or	al, al
+ 000002A0  75 02	   *	    jne    @C002C
+ 000002A2  EB 1B				jmp InterpretBreak
+					.ENDIF
+ 000002A4		   *@C002C:
+					
+ 000002A4  BA 00000054 R		mov edx, OFFSET buffer
+ 000002A9  E8 FFFFFD52			call SyntaxCheck
+ 000002AE  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
+ 000002B3  E8 FFFFFDD8			call BFInterpret
+ 000002B8  E8 00000000 E		call crlf
+ 000002BD  EB A7		     jmp Interpret
+ 000002BF			InterpretBreak:
+ 000002BF  E8 00000000 E	    call WaitMsg
 					invoke ExitProcess,0
- 0000023E  6A 00	   *	    push   +000000000h
- 00000240  E8 00000000 E   *	    call   ExitProcess
- 00000245			main endp
+ 000002C4  6A 00	   *	    push   +000000000h
+ 000002C6  E8 00000000 E   *	    call   ExitProcess
+ 000002CB			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 23:41:13
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/11/18 01:33:31
 main.asm						     Symbols 2 - 1
 
 
@@ -437,14 +507,15 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000308E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000245 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000310C Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000002CB Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
+ADDSUM . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 BFInterpret  . . . . . . . . . .	P Near	 00000090 _TEXT	Length= 0000018B Public STDCALL
   Loop1  . . . . . . . . . . . .	L Near	 000000A0 _TEXT	
   FindEndWhile . . . . . . . . .	L Near	 000001A5 _TEXT	
@@ -559,7 +630,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 0000021B _TEXT	Length= 0000002A Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 0000021B _TEXT	Length= 000000B0 Public STDCALL
+  Interpret  . . . . . . . . . .	L Near	 00000266 _TEXT	
+  InitBuffer . . . . . . . . . .	L Near	 0000027A _TEXT	
+  InterpretBreak . . . . . . . .	L Near	 000002BF _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -782,20 +856,23 @@ ValidCharacter . . . . . . . . .	Byte	 00002058 _DATA
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+authMsg  . . . . . . . . . . . .	Byte	 000020B7 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 buffer . . . . . . . . . . . . .	Byte	 00000054 _DATA	
 bytesRead  . . . . . . . . . . .	DWord	 00001054 _DATA	
-codeLocation . . . . . . . . . .	DWord	 00003075 _DATA	
+codeLocation . . . . . . . . . .	DWord	 000030F3 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-executeMemoryLocation  . . . . .	DWord	 00003071 _DATA	
-executeMemory  . . . . . . . . .	Byte	 00002071 _DATA	
+dirMsg . . . . . . . . . . . . .	Byte	 00002071 _DATA	
+executeMemoryLocation  . . . . .	DWord	 000030EF _DATA	
+executeMemory  . . . . . . . . .	Byte	 000020EF _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 fileName . . . . . . . . . . . .	Byte	 00000004 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 inputHandle  . . . . . . . . . .	DWord	 00000000 _DATA	
+interpretMsg . . . . . . . . . .	Byte	 000020EA _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -804,8 +881,9 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-whileCheck . . . . . . . . . . .	Byte	 00003079 _DATA	
-whileError . . . . . . . . . . .	Byte	 0000307A _DATA	
+welcomeMsg . . . . . . . . . . .	Byte	 00002081 _DATA	
+whileCheck . . . . . . . . . . .	Byte	 000030F7 _DATA	
+whileErrMsg  . . . . . . . . . .	Byte	 000030F8 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

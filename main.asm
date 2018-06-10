@@ -14,14 +14,17 @@ bytesRead DWORD ?
 AfterSyntaxCheck BYTE Max DUP(?)
 ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
 ErrMsg BYTE "括號數量不對稱",0ah,0dh,0
-
+dirMsg BYTE "Input .bf's dir", 0
+welcomeMsg BYTE "Hey guys this is Brain Fuck, let's fucking your brain", 0
+authMsg BYTE "Authors: fdmdkw, NerovaRiuzGX, weiber-hsu, Ridost ", 0
+interpretMsg BYTE ">>> ",0
 ;------------------------------
-; ExecuteCode proceduce used variable
+; BFInterpret proceduce used variable
 executeMemory BYTE MAX DUP(0)
 executeMemoryLocation DWORD ?
 codeLocation DWORD ?
 whileCheck SBYTE ?
-whileError BYTE "Syntax Error: while",0
+whileErrMsg BYTE "Syntax Error: while",0
 ;-------------------------------
 
 .code
@@ -180,7 +183,7 @@ FindEndWhile:           ; find end of while loop character ']'
 		mov ebx, [codeLocation]
           mov al, [ebx]
 		.IF al == 0         ; if codeLocation = end of file(which initialized = 0)
-			mov edx, OFFSET whileError
+			mov edx, OFFSET whileErrMsg
 			call WriteString
 			call Crlf
                jmp Return
@@ -215,6 +218,9 @@ BFInterpret endp
 
 
 main proc
+	mov edx, OFFSET dirMsg
+	call WriteString
+     call Crlf
 	
 	call ReadFileName
 	mov edx, OFFSET buffer
@@ -222,6 +228,44 @@ main proc
 	mov edx, OFFSET AfterSyntaxCheck
 	call BFInterpret
 	call crlf
+	
+	mov edx, OFFSET welcomeMsg
+	call WriteString
+	call Crlf
+     mov edx, OFFSET authMsg
+	call WriteString
+	call Crlf
+Interpret:	
+	call Crlf
+     mov edx, OFFSET interpretMsg
+	call WriteString
+
+     mov ecx, MAX
+InitBuffer:
+     mov esi, OFFSET buffer
+     add esi, ecx
+     dec esi
+     mov al, 0
+     mov [esi], al
+     loop InitBuffer
+
+	mov edx, OFFSET buffer
+	mov ecx, SIZEOF buffer
+	call ReadString
+	
+	mov esi, OFFSET buffer
+     mov al, [esi]
+	.IF al == 0
+		jmp InterpretBreak
+	.ENDIF
+	
+	mov edx, OFFSET buffer
+	call SyntaxCheck
+	mov edx, OFFSET AfterSyntaxCheck
+	call BFInterpret
+	call crlf
+     jmp Interpret
+InterpretBreak:
     call WaitMsg
 	invoke ExitProcess,0
 main endp
