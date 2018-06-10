@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/03/18 16:52:53
+Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 14:44:38
 main.asm						     Page 1 - 1
 
 
@@ -33,12 +33,22 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000004  00000050 [		fileName BYTE 80 DUP(?)
 	    00
 	   ]
- 00000054  00001000 [		buffer BYTE MAX DUP(?)
+ 00000054  00001000 [		buffer BYTE MAX DUP(?)	
 	    00
 	   ]
  00001054 00000000		bytesRead DWORD ?
-
+ 00001058  00001000 [		AfterSyntaxCheck BYTE Max DUP(?)
+	    00
+	   ]
+ 00002058 5B 5D 2B 2D 3C	ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
+	   3E 2C 2E
  00000000			.code
+
+ 00000000			SyntaxCheck proc
+					; []+-.<>,
+					
+ 00000000			SyntaxCheck endp
+
  00000000			main proc
  00000000  BA 00000004 R		mov edx, OFFSET fileName
  00000005  B9 00000050			mov ecx, SIZEOF fileName
@@ -55,15 +65,16 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000032  A3 00001054 R		mov bytesRead, eax
 
  00000037  BA 00000054 R		mov edx, OFFSET buffer
- 0000003C  E8 00000000 E		call WriteString
-
- 00000041  E8 00000000 E	    call WaitMsg
+ 0000003C  E8 FFFFFFBF			call SyntaxCheck
+ 00000041  E8 00000000 E		call WriteString
+ 00000046  E8 00000000 E		call crlf
+ 0000004B  E8 00000000 E	    call WaitMsg
 					invoke ExitProcess,0
- 00000046  6A 00	   *	    push   +000000000h
- 00000048  E8 00000000 E   *	    call   ExitProcess
- 0000004D			main endp
+ 00000050  6A 00	   *	    push   +000000000h
+ 00000052  E8 00000000 E   *	    call   ExitProcess
+ 00000057			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/03/18 16:52:53
+Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 14:44:38
 main.asm						     Symbols 2 - 1
 
 
@@ -157,8 +168,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00001058 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004D Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00002060 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000057 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -247,6 +258,7 @@ Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SyntaxCheck  . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000000 Public STDCALL
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -266,7 +278,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004D Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000057 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -286,6 +298,7 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
+AfterSyntaxCheck . . . . . . . .	Byte	 00001058 _DATA	
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
@@ -483,6 +496,7 @@ VK_SPACE . . . . . . . . . . . .	Number	 00000020h
 VK_SUBTRACT  . . . . . . . . . .	Number	 0000006Dh   
 VK_TAB . . . . . . . . . . . . .	Number	 00000009h   
 VK_UP  . . . . . . . . . . . . .	Number	 00000026h   
+ValidCharacter . . . . . . . . .	Byte	 00002058 _DATA	
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA

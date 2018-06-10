@@ -11,8 +11,28 @@ inputHandle HANDLE ?
 fileName BYTE 80 DUP(?)
 buffer BYTE MAX DUP(?)	
 bytesRead DWORD ?
-
+AfterSyntaxCheck BYTE Max DUP(?)
+ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
 .code
+
+SyntaxCheck proc
+	; []+-.<>,
+	mov ecx,SIZEOF buffer
+	L1:
+		push ecx
+		mov ecx,8
+		mov esi,OFFSET ValidCharacter
+		L2:
+			cmp buffer,[esi]
+			inc esi
+			je Valid
+			
+			
+		loop L2
+		pop ecx
+	loop L1
+SyntaxCheck endp
+
 main proc
 	mov edx, OFFSET fileName
 	mov ecx, SIZEOF fileName
@@ -29,6 +49,7 @@ main proc
 	mov bytesRead, eax
 
 	mov edx, OFFSET buffer
+	call SyntaxCheck
 	call WriteString
 	call crlf
     call WaitMsg
