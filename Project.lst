@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 17:35:00
+Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 18:16:00
 main.asm						     Page 1 - 1
 
 
@@ -42,9 +42,10 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 	   ]
  00002058 5B 5D 2B 2D 3C	ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
 	   3E 2C 2E
- 00002060 AC 41 B8 B9 BC	ErrMsg BYTE "括號數量不對稱",0
+ 00002060 AC 41 B8 B9 BC	ErrMsg BYTE "括號數量不對稱",0ah,0dh,0
 	   C6 B6 71 A4 A3
-	   B9 EF BA D9 00
+	   B9 EF BA D9 0A
+	   0D 00
  00000000			.code
 
  00000000			SyntaxCheck proc 
@@ -153,7 +154,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  000000BA  E8 00000000 E   *	    call   ExitProcess
  000000BF			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 17:35:00
+Microsoft (R) Macro Assembler Version 14.14.26430.0	    06/10/18 18:16:00
 main.asm						     Symbols 2 - 1
 
 
@@ -247,7 +248,7 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000206F Para	  Public  'DATA'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00002071 Para	  Public  'DATA'	
 _TEXT  . . . . . . . . . . . . .	32 Bit	 000000BF Para	  Public  'CODE'	
 
 
@@ -289,7 +290,6 @@ GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-HW . . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL

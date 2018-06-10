@@ -13,7 +13,7 @@ buffer BYTE MAX DUP(?)
 bytesRead DWORD ?
 AfterSyntaxCheck BYTE Max DUP(?)
 ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
-ErrMsg BYTE "括號數量不對稱",0
+ErrMsg BYTE "括號數量不對稱",0ah,0dh,0
 .code
 
 SyntaxCheck proc 
