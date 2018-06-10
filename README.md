@@ -2,6 +2,7 @@
 - Written in masm 32bits assembly
 - Develop environment on visual studio 2017, using [Irvine library](http://kipirvine.com/asm/gettingStartedVS2017/index.htm)
 - Try some example in brainfuck-example directory
+- Brainfuck-visualizer and some example [moky/BrainFuck](https://github.com/moky/BrainFuck)
 
 ## Program processing flow
 1. Editing brainfuck source file .bf
