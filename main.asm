@@ -53,7 +53,7 @@ SyntaxCheck endp
 
 
 ;-------------------------------------------------------------
-ReadFile proc uses eax, ecx, edx
+ReadFileName proc uses eax ecx edx
 ;
 ; Read a file content into buffer string.
 ;-------------------------------------------------------------
@@ -68,14 +68,14 @@ ReadFile proc uses eax, ecx, edx
 	mov ecx, SIZEOF buffer
 	call ReadFromFile
 	mov bytesRead, eax
-	
-ReadFile endp
+	ret
+ReadFileName endp
 
 
 
 main proc
 	
-
+	call ReadFileName
 	mov edx, OFFSET buffer
 	call SyntaxCheck
 	mov edx, OFFSET AfterSyntaxCheck

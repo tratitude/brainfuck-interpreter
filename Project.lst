@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 16:16:51
+Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/10/18 16:36:13
 main.asm						     Page 1 - 1
 
 
@@ -44,7 +44,7 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 	   3E 2C 2E
  00000000			.code
 
- 00000000			SyntaxCheck proc
+ 00000000			SyntaxCheck proc 
 					; []+-.<>,
  00000000  B9 00001000			mov ecx,SIZEOF buffer
  00000005  BE 00000054 R		mov esi,OFFSET buffer
@@ -80,34 +80,51 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  00000034  C3				ret
  00000035			SyntaxCheck endp
 
- 00000035			main proc
- 00000035  BA 00000004 R		mov edx, OFFSET fileName
- 0000003A  B9 00000050			mov ecx, SIZEOF fileName
- 0000003F  E8 00000000 E		call ReadString
 
- 00000044  BA 00000004 R		mov edx, OFFSET fileName
- 00000049  E8 00000000 E		call OpenInputFile
- 0000004E  A3 00000000 R		mov inputHandle, eax
+				;-------------------------------------------------------------
+ 00000035			ReadFileName proc uses eax ecx edx
+				;
+				; Read a file content into buffer string.
+				;-------------------------------------------------------------
+ 00000035  50		   *	    push   eax
+ 00000036  51		   *	    push   ecx
+ 00000037  52		   *	    push   edx
+ 00000038  BA 00000004 R		mov edx, OFFSET fileName
+ 0000003D  B9 00000050			mov ecx, SIZEOF fileName
+ 00000042  E8 00000000 E		call ReadString
+
+ 00000047  BA 00000004 R		mov edx, OFFSET fileName
+ 0000004C  E8 00000000 E		call OpenInputFile
+
+ 00000051  BA 00000054 R		mov edx, OFFSET buffer
+ 00000056  B9 00001000			mov ecx, SIZEOF buffer
+ 0000005B  E8 00000000 E		call ReadFromFile
+ 00000060  A3 00001054 R		mov bytesRead, eax
+					ret
+ 00000065  5A		   *	    pop    edx
+ 00000066  59		   *	    pop    ecx
+ 00000067  58		   *	    pop    eax
+ 00000068  C3		   *	    ret    00000h
+ 00000069			ReadFileName endp
+
+
+
+ 00000069			main proc
 					
- 00000053  A1 00000000 R		mov eax, inputHandle
- 00000058  BA 00000054 R		mov edx, OFFSET buffer
- 0000005D  B9 00001000			mov ecx, SIZEOF buffer
- 00000062  E8 00000000 E		call ReadFromFile
- 00000067  A3 00001054 R		mov bytesRead, eax
-
- 0000006C  BA 00000054 R		mov edx, OFFSET buffer
- 00000071  E8 FFFFFF8A			call SyntaxCheck
- 00000076  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
- 0000007B  B9 00001000			mov ecx, SIZEOF AfterSyntaxCheck
- 00000080  E8 00000000 E		call WriteString
- 00000085  E8 00000000 E		call crlf
- 0000008A  E8 00000000 E	    call WaitMsg
+ 00000069  E8 FFFFFFC7			call ReadFileName
+ 0000006E  BA 00000054 R		mov edx, OFFSET buffer
+ 00000073  E8 FFFFFF88			call SyntaxCheck
+ 00000078  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
+ 0000007D  B9 00001000			mov ecx, SIZEOF AfterSyntaxCheck
+ 00000082  E8 00000000 E		call WriteString
+ 00000087  E8 00000000 E		call crlf
+ 0000008C  E8 00000000 E	    call WaitMsg
 					invoke ExitProcess,0
- 0000008F  6A 00	   *	    push   +000000000h
- 00000091  E8 00000000 E   *	    call   ExitProcess
- 00000096			main endp
+ 00000091  6A 00	   *	    push   +000000000h
+ 00000093  E8 00000000 E   *	    call   ExitProcess
+ 00000098			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.13.26129.0	    06/10/18 16:16:51
+Microsoft (R) Macro Assembler Version 14.13.26128.0	    06/10/18 16:36:13
 main.asm						     Symbols 2 - 1
 
 
@@ -202,7 +219,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00002060 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000096 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000098 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -243,7 +260,6 @@ GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-HW . . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -265,6 +281,7 @@ ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadDec  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFileName . . . . . . . . . .	P Near	 00000035 _TEXT	Length= 00000034 Public STDCALL
 ReadFile . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadFloat  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadFromFile . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -314,7 +331,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000035 _TEXT	Length= 00000061 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000069 _TEXT	Length= 0000002F Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
