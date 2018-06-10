@@ -18,19 +18,37 @@ ValidCharacter BYTE '[' ,']' ,'+' ,'-' ,'<' ,'>' ,',' ,'.'
 SyntaxCheck proc
 	; []+-.<>,
 	mov ecx,SIZEOF buffer
+	mov esi,OFFSET buffer
+	mov edi,OFFSET AfterSyntaxCheck
 	L1:
+		mov al,[esi]
+		;call WriteChar
+		inc esi
+		push esi
 		push ecx
 		mov ecx,8
 		mov esi,OFFSET ValidCharacter
 		L2:
-			cmp buffer,[esi]
+			mov bl,[esi]
+			;mov al,
+			;call WriteChar
 			inc esi
-			je Valid
-			
-			
+			cmp	al,bl
+			jne InValid
+
+			push esi
+			mov [edi],bl
+			inc edi
+			pop esi
+			;call WaitMsg
+			InValid:
 		loop L2
 		pop ecx
+		pop esi
 	loop L1
+	mov bl,0
+	mov [edi],bl
+	ret
 SyntaxCheck endp
 
 main proc
@@ -50,6 +68,8 @@ main proc
 
 	mov edx, OFFSET buffer
 	call SyntaxCheck
+	mov edx, OFFSET AfterSyntaxCheck
+	mov ecx, SIZEOF AfterSyntaxCheck
 	call WriteString
 	call crlf
     call WaitMsg
