@@ -8,3 +8,15 @@
 2. Run main.exe
 3. Input source file's location
 4. Print the output on screen
+
+## Syntax
+|Brainfuck|C|
+|:---:|:---:|
+|>|++ptr;|
+|<|--ptr;|
+|+|++*ptr;|
+|-|--*ptr;|
+|.|putchar(*ptr);|
+|,|*ptr = getchar();|
+|[|while (*ptr) {|
+|]|}|
