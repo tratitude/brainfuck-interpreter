@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/11/18 01:33:31
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/11/18 15:23:17
 main.asm						     Page 1 - 1
 
 
@@ -195,27 +195,27 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 					.IF al == 0
  000000A7  0A C0	   *	    or	al, al
  000000A9  75 0A	   *	    jne    @C000A
- 000000AB  E9 0000016A				jmp Return
+ 000000AB  E9 0000016F				jmp Return
 					.ELSEIF al == '>'
- 000000B0  E9 000000F0	   *	    jmp    @C000C
+ 000000B0  E9 000000F5	   *	    jmp    @C000C
  000000B5		   *@C000A:
  000000B5  3C 3E	   *	    cmp    al, '>'
  000000B7  75 17	   *	    jne    @C000D
  000000B9  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
  000000BF  43					inc ebx
  000000C0  89 1D 000030EF R			mov [executeMemoryLocation], ebx
- 000000C6  E9 0000013D				jmp CodeLoop
+ 000000C6  E9 00000142				jmp CodeLoop
 					.ELSEIF al == '<'
- 000000CB  E9 000000D5	   *	    jmp    @C000F
+ 000000CB  E9 000000DA	   *	    jmp    @C000F
  000000D0		   *@C000D:
  000000D0  3C 3C	   *	    cmp    al, '<'
  000000D2  75 17	   *	    jne    @C0010
  000000D4  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
  000000DA  4B					dec ebx
  000000DB  89 1D 000030EF R			mov [executeMemoryLocation], ebx
- 000000E1  E9 00000122				jmp CodeLoop
+ 000000E1  E9 00000127				jmp CodeLoop
 					.ELSEIF al == '+'
- 000000E6  E9 000000BA	   *	    jmp    @C0012
+ 000000E6  E9 000000BF	   *	    jmp    @C0012
  000000EB		   *@C0010:
  000000EB  3C 2B	   *	    cmp    al, '+'
  000000ED  75 15	   *	    jne    @C0013
@@ -223,9 +223,9 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  000000F4  8A 18		          mov bl, [eax]
  000000F6  FE C3				inc bl
  000000F8  88 18				mov [eax], bl
- 000000FA  E9 00000109				jmp CodeLoop
+ 000000FA  E9 0000010E				jmp CodeLoop
 					.ELSEIF al == '-'
- 000000FF  E9 000000A1	   *	    jmp    @C0015
+ 000000FF  E9 000000A6	   *	    jmp    @C0015
  00000104		   *@C0013:
  00000104  3C 2D	   *	    cmp    al, '-'
  00000106  75 15	   *	    jne    @C0016
@@ -233,187 +233,188 @@ main.asm(4) : warning A4011:multiple .MODEL directives found : .MODEL ignored
  0000010D  8A 18		          mov bl, [eax]
  0000010F  FE CB		          dec bl
  00000111  88 18		          mov[eax], bl
- 00000113  E9 000000F0		          jmp CodeLoop
+ 00000113  E9 000000F5		          jmp CodeLoop
 					.ELSEIF al == '.'
- 00000118  E9 00000088	   *	    jmp    @C0018
+ 00000118  E9 0000008D	   *	    jmp    @C0018
  0000011D		   *@C0016:
  0000011D  3C 2E	   *	    cmp    al, '.'
  0000011F  75 14	   *	    jne    @C0019
  00000121  8B 1D 000030EF R	          mov ebx, executeMemoryLocation
  00000127  8A 03				mov al, [ebx]
  00000129  E8 00000000 E			call WriteChar
- 0000012E  E9 000000D5				jmp CodeLoop
+ 0000012E  E9 000000DA				jmp CodeLoop
 				     .ELSEIF al == ','
- 00000133  EB 70	   *	    jmp    @C001B
+ 00000133  EB 75	   *	    jmp    @C001B
  00000135		   *@C0019:
  00000135  3C 2C	   *	    cmp    al, ','
- 00000137  75 19	   *	    jne    @C001C
+ 00000137  75 1E	   *	    jne    @C001C
  00000139  E8 00000000 E	          call ReadChar
- 0000013E  E8 00000000 E			  call writechar
- 00000143  8B 1D 000030EF R	          mov ebx, executeMemoryLocation
- 00000149  88 03		          mov[ebx], al
- 0000014B  E9 000000B8		          jmp CodeLoop
+ 0000013E  E8 00000000 E			call Writechar
+ 00000143  E8 00000000 E	          call Crlf
+ 00000148  8B 1D 000030EF R	          mov ebx, executeMemoryLocation
+ 0000014E  88 03		          mov[ebx], al
+ 00000150  E9 000000B8		          jmp CodeLoop
 					.ELSEIF al == '['
- 00000150  EB 53	   *	    jmp    @C001E
- 00000152		   *@C001C:
- 00000152  3C 5B	   *	    cmp    al, '['
- 00000154  75 35	   *	    jne    @C001F
- 00000156  8B 1D 000030F3 R			mov ebx, [codeLocation]
- 0000015C  43					inc ebx
- 0000015D  89 1D 000030F3 R	          mov [codeLocation], ebx
- 00000163  8A 03		          mov al, [ebx]
- 00000165  3C 5D				cmp al, ']'      ; nothing in while loop
- 00000167  0F 84 0000009B			je CodeLoop
+ 00000155  EB 53	   *	    jmp    @C001E
+ 00000157		   *@C001C:
+ 00000157  3C 5B	   *	    cmp    al, '['
+ 00000159  75 35	   *	    jne    @C001F
+ 0000015B  8B 1D 000030F3 R			mov ebx, [codeLocation]
+ 00000161  43					inc ebx
+ 00000162  89 1D 000030F3 R	          mov [codeLocation], ebx
+ 00000168  8A 03		          mov al, [ebx]
+ 0000016A  3C 5D				cmp al, ']'      ; nothing in while loop
+ 0000016C  0F 84 0000009B			je CodeLoop
 						
- 0000016D  A1 000030EF R	          mov eax, [executeMemoryLocation]
- 00000172  8A 18		          mov bl, [eax]
- 00000174  80 FB 00		          cmp bl, 0        ; jump out of while loop
- 00000177  74 2C		          je FindEndWhile
+ 00000172  A1 000030EF R	          mov eax, [executeMemoryLocation]
+ 00000177  8A 18		          mov bl, [eax]
+ 00000179  80 FB 00		          cmp bl, 0        ; jump out of while loop
+ 0000017C  74 2C		          je FindEndWhile
 
- 00000179  8B 1D 000030F3 R	          mov ebx, [codeLocation]
- 0000017F  4B			          dec ebx          ; decrease the addtional increasement
- 00000180  53			          push ebx         ; push while loop instruction
- 00000181  89 1D 000030F3 R	          mov [codeLocation], ebx
- 00000187  EB 7F				jmp CodeLoop
+ 0000017E  8B 1D 000030F3 R	          mov ebx, [codeLocation]
+ 00000184  4B			          dec ebx          ; decrease the addtional increasement
+ 00000185  53			          push ebx         ; push while loop instruction
+ 00000186  89 1D 000030F3 R	          mov [codeLocation], ebx
+ 0000018C  EB 7F				jmp CodeLoop
 					.ELSEIF al == ']'
- 00000189  EB 1A	   *	    jmp    @C0021
- 0000018B		   *@C001F:
- 0000018B  3C 5D	   *	    cmp    al, ']'
- 0000018D  75 16	   *	    jne    @C0022
- 0000018F  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
- 00000195  8A 03		          mov al, [ebx]
- 00000197  3C 00				cmp al, 0        ; jump out while loop
- 00000199  74 6A				je PopCode
+ 0000018E  EB 1A	   *	    jmp    @C0021
+ 00000190		   *@C001F:
+ 00000190  3C 5D	   *	    cmp    al, ']'
+ 00000192  75 16	   *	    jne    @C0022
+ 00000194  8B 1D 000030EF R			mov ebx, [executeMemoryLocation]
+ 0000019A  8A 03		          mov al, [ebx]
+ 0000019C  3C 00				cmp al, 0        ; jump out while loop
+ 0000019E  74 6A				je PopCode
 						
- 0000019B  5B					pop ebx
- 0000019C  89 1D 000030F3 R			mov codeLocation, ebx
- 000001A2  53					push ebx
- 000001A3  EB 63				jmp CodeLoop
+ 000001A0  5B					pop ebx
+ 000001A1  89 1D 000030F3 R			mov codeLocation, ebx
+ 000001A7  53					push ebx
+ 000001A8  EB 63				jmp CodeLoop
 					.ENDIF
- 000001A5		   *@C0022:
- 000001A5		   *@C0021:
- 000001A5		   *@C001E:
- 000001A5		   *@C001B:
- 000001A5		   *@C0018:
- 000001A5		   *@C0015:
- 000001A5		   *@C0012:
- 000001A5		   *@C000F:
- 000001A5		   *@C000C:
+ 000001AA		   *@C0022:
+ 000001AA		   *@C0021:
+ 000001AA		   *@C001E:
+ 000001AA		   *@C001B:
+ 000001AA		   *@C0018:
+ 000001AA		   *@C0015:
+ 000001AA		   *@C0012:
+ 000001AA		   *@C000F:
+ 000001AA		   *@C000C:
 
- 000001A5			FindEndWhile:           ; find end of while loop character ']'
- 000001A5  C6 05 000030F7 R		mov [whileCheck], 1 ; initialize whileCheck=1
+ 000001AA			FindEndWhile:           ; find end of while loop character ']'
+ 000001AA  C6 05 000030F7 R		mov [whileCheck], 1 ; initialize whileCheck=1
 	   01
 					
- 000001AC				Loop2:
- 000001AC  8B 1D 000030F3 R			mov ebx, [codeLocation]
- 000001B2  8A 03		          mov al, [ebx]
+ 000001B1				Loop2:
+ 000001B1  8B 1D 000030F3 R			mov ebx, [codeLocation]
+ 000001B7  8A 03		          mov al, [ebx]
 						.IF al == 0         ; if codeLocation = end of file(which initialized = 0)
- 000001B4  0A C0	   *	    or	al, al
- 000001B6  75 13	   *	    jne    @C0024
- 000001B8  BA 000030F8 R				mov edx, OFFSET whileErrMsg
- 000001BD  E8 00000000 E			call WriteString
- 000001C2  E8 00000000 E				call Crlf
- 000001C7  EB 51		               jmp Return
+ 000001B9  0A C0	   *	    or	al, al
+ 000001BB  75 13	   *	    jne    @C0024
+ 000001BD  BA 000030F8 R				mov edx, OFFSET whileErrMsg
+ 000001C2  E8 00000000 E				call WriteString
+ 000001C7  E8 00000000 E				call Crlf
+ 000001CC  EB 51		               jmp Return
 						.ELSEIF al == '['   ; if codeLocation = '[', whileCheck = whileCheck +1
- 000001C9  EB 2B	   *	    jmp    @C0026
- 000001CB		   *@C0024:
- 000001CB  3C 5B	   *	    cmp    al, '['
- 000001CD  75 10	   *	    jne    @C0027
- 000001CF  8A 1D 000030F7 R	               mov bl, [whileCheck]
- 000001D5  FE C3		               inc bl
- 000001D7  88 1D 000030F7 R	               mov [whileCheck], bl
+ 000001CE  EB 2B	   *	    jmp    @C0026
+ 000001D0		   *@C0024:
+ 000001D0  3C 5B	   *	    cmp    al, '['
+ 000001D2  75 10	   *	    jne    @C0027
+ 000001D4  8A 1D 000030F7 R	               mov bl, [whileCheck]
+ 000001DA  FE C3		               inc bl
+ 000001DC  88 1D 000030F7 R	               mov [whileCheck], bl
 						.ELSEIF al == ']'
- 000001DD  EB 17	   *	    jmp    @C0029
- 000001DF		   *@C0027:
- 000001DF  3C 5D	   *	    cmp    al, ']'
- 000001E1  75 13	   *	    jne    @C002A
- 000001E3  8A 1D 000030F7 R				mov bl, [whileCheck]
- 000001E9  80 FB 01					cmp bl, 1       ; if codeLocation = ']' and whileCheck = 1, find the right ']'
- 000001EC  74 1A					je CodeLoop
- 000001EE  FE CB					dec bl          ; if codeLocation = ']' and whileCheck = 1, find the wrong ']', whileCheck = whileCheck -1
- 000001F0  88 1D 000030F7 R				mov [whileCheck], bl
+ 000001E2  EB 17	   *	    jmp    @C0029
+ 000001E4		   *@C0027:
+ 000001E4  3C 5D	   *	    cmp    al, ']'
+ 000001E6  75 13	   *	    jne    @C002A
+ 000001E8  8A 1D 000030F7 R				mov bl, [whileCheck]
+ 000001EE  80 FB 01					cmp bl, 1       ; if codeLocation = ']' and whileCheck = 1, find the right ']'
+ 000001F1  74 1A					je CodeLoop
+ 000001F3  FE CB					dec bl          ; if codeLocation = ']' and whileCheck = 1, find the wrong ']', whileCheck = whileCheck -1
+ 000001F5  88 1D 000030F7 R				mov [whileCheck], bl
 						.ENDIF
- 000001F6		   *@C002A:
- 000001F6		   *@C0029:
- 000001F6		   *@C0026:
- 000001F6				Loop2EndIf:
- 000001F6  8B 1D 000030F3 R			mov ebx, [codeLocation]
- 000001FC  43					inc ebx
- 000001FD  89 1D 000030F3 R			mov [codeLocation], ebx
- 00000203  EB A7				jmp Loop2
+ 000001FB		   *@C002A:
+ 000001FB		   *@C0029:
+ 000001FB		   *@C0026:
+ 000001FB				Loop2EndIf:
+ 000001FB  8B 1D 000030F3 R			mov ebx, [codeLocation]
+ 00000201  43					inc ebx
+ 00000202  89 1D 000030F3 R			mov [codeLocation], ebx
+ 00000208  EB A7				jmp Loop2
 						
- 00000205			PopCode:
- 00000205  5B				pop ebx
- 00000206  EB 00			jmp CodeLoop
- 00000208			CodeLoop:
- 00000208  8B 1D 000030F3 R		mov ebx, [codeLocation]
- 0000020E  43			     inc ebx
- 0000020F  89 1D 000030F3 R		mov [codeLocation], ebx
- 00000215  E9 FFFFFE86			jmp Loop1
- 0000021A			Return:
- 0000021A  C3				ret
- 0000021B			BFInterpret endp
+ 0000020A			PopCode:
+ 0000020A  5B				pop ebx
+ 0000020B  EB 00			jmp CodeLoop
+ 0000020D			CodeLoop:
+ 0000020D  8B 1D 000030F3 R		mov ebx, [codeLocation]
+ 00000213  43			     inc ebx
+ 00000214  89 1D 000030F3 R		mov [codeLocation], ebx
+ 0000021A  E9 FFFFFE81			jmp Loop1
+ 0000021F			Return:
+ 0000021F  C3				ret
+ 00000220			BFInterpret endp
 
 
- 0000021B			main proc
- 0000021B  BA 00002071 R		mov edx, OFFSET dirMsg
- 00000220  E8 00000000 E		call WriteString
- 00000225  E8 00000000 E	     call Crlf
+ 00000220			main proc
+ 00000220  BA 00002071 R		mov edx, OFFSET dirMsg
+ 00000225  E8 00000000 E		call WriteString
+ 0000022A  E8 00000000 E	     call Crlf
 					
- 0000022A  E8 FFFFFE2D			call ReadFileName
- 0000022F  BA 00000054 R		mov edx, OFFSET buffer
- 00000234  E8 FFFFFDC7			call SyntaxCheck
- 00000239  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
- 0000023E  E8 FFFFFE4D			call BFInterpret
- 00000243  E8 00000000 E		call crlf
+ 0000022F  E8 FFFFFE28			call ReadFileName
+ 00000234  BA 00000054 R		mov edx, OFFSET buffer
+ 00000239  E8 FFFFFDC2			call SyntaxCheck
+ 0000023E  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
+ 00000243  E8 FFFFFE48			call BFInterpret
+ 00000248  E8 00000000 E		call crlf
 					
- 00000248  BA 00002081 R		mov edx, OFFSET welcomeMsg
- 0000024D  E8 00000000 E		call WriteString
- 00000252  E8 00000000 E		call Crlf
- 00000257  BA 000020B7 R	     mov edx, OFFSET authMsg
- 0000025C  E8 00000000 E		call WriteString
- 00000261  E8 00000000 E		call Crlf
- 00000266			Interpret:	
+ 0000024D  BA 00002081 R		mov edx, OFFSET welcomeMsg
+ 00000252  E8 00000000 E		call WriteString
+ 00000257  E8 00000000 E		call Crlf
+ 0000025C  BA 000020B7 R	     mov edx, OFFSET authMsg
+ 00000261  E8 00000000 E		call WriteString
  00000266  E8 00000000 E		call Crlf
- 0000026B  BA 000020EA R	     mov edx, OFFSET interpretMsg
- 00000270  E8 00000000 E		call WriteString
+ 0000026B			Interpret:	
+ 0000026B  E8 00000000 E		call Crlf
+ 00000270  BA 000020EA R	     mov edx, OFFSET interpretMsg
+ 00000275  E8 00000000 E		call WriteString
 
- 00000275  B9 00001000		     mov ecx, MAX
- 0000027A			InitBuffer:
- 0000027A  BE 00000054 R	     mov esi, OFFSET buffer
- 0000027F  03 F1		     add esi, ecx
- 00000281  4E			     dec esi
- 00000282  B0 00		     mov al, 0
- 00000284  88 06		     mov [esi], al
- 00000286  E2 F2		     loop InitBuffer
+ 0000027A  B9 00001000		     mov ecx, MAX
+ 0000027F			InitBuffer:
+ 0000027F  BE 00000054 R	     mov esi, OFFSET buffer
+ 00000284  03 F1		     add esi, ecx
+ 00000286  4E			     dec esi
+ 00000287  B0 00		     mov al, 0
+ 00000289  88 06		     mov [esi], al
+ 0000028B  E2 F2		     loop InitBuffer
 
- 00000288  BA 00000054 R		mov edx, OFFSET buffer
- 0000028D  B9 00001000			mov ecx, SIZEOF buffer
- 00000292  E8 00000000 E		call ReadString
+ 0000028D  BA 00000054 R		mov edx, OFFSET buffer
+ 00000292  B9 00001000			mov ecx, SIZEOF buffer
+ 00000297  E8 00000000 E		call ReadString
 					
- 00000297  BE 00000054 R		mov esi, OFFSET buffer
- 0000029C  8A 06		     mov al, [esi]
+ 0000029C  BE 00000054 R		mov esi, OFFSET buffer
+ 000002A1  8A 06		     mov al, [esi]
 					.IF al == 0
- 0000029E  0A C0	   *	    or	al, al
- 000002A0  75 02	   *	    jne    @C002C
- 000002A2  EB 1B				jmp InterpretBreak
+ 000002A3  0A C0	   *	    or	al, al
+ 000002A5  75 02	   *	    jne    @C002C
+ 000002A7  EB 1B				jmp InterpretBreak
 					.ENDIF
- 000002A4		   *@C002C:
+ 000002A9		   *@C002C:
 					
- 000002A4  BA 00000054 R		mov edx, OFFSET buffer
- 000002A9  E8 FFFFFD52			call SyntaxCheck
- 000002AE  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
- 000002B3  E8 FFFFFDD8			call BFInterpret
- 000002B8  E8 00000000 E		call crlf
- 000002BD  EB A7		     jmp Interpret
- 000002BF			InterpretBreak:
- 000002BF  E8 00000000 E	    call WaitMsg
+ 000002A9  BA 00000054 R		mov edx, OFFSET buffer
+ 000002AE  E8 FFFFFD4D			call SyntaxCheck
+ 000002B3  BA 00001058 R		mov edx, OFFSET AfterSyntaxCheck
+ 000002B8  E8 FFFFFDD3			call BFInterpret
+ 000002BD  E8 00000000 E		call crlf
+ 000002C2  EB A7		     jmp Interpret
+ 000002C4			InterpretBreak:
+ 000002C4  E8 00000000 E	    call WaitMsg
 					invoke ExitProcess,0
- 000002C4  6A 00	   *	    push   +000000000h
- 000002C6  E8 00000000 E   *	    call   ExitProcess
- 000002CB			main endp
+ 000002C9  6A 00	   *	    push   +000000000h
+ 000002CB  E8 00000000 E   *	    call   ExitProcess
+ 000002D0			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/11/18 01:33:31
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    06/11/18 15:23:17
 main.asm						     Symbols 2 - 1
 
 
@@ -508,7 +509,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 0000310C Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000002CB Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000002D0 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -516,14 +517,14 @@ Procedures, parameters, and locals:
                 N a m e                 Type     Value    Attr
 
 ADDSUM . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-BFInterpret  . . . . . . . . . .	P Near	 00000090 _TEXT	Length= 0000018B Public STDCALL
+BFInterpret  . . . . . . . . . .	P Near	 00000090 _TEXT	Length= 00000190 Public STDCALL
   Loop1  . . . . . . . . . . . .	L Near	 000000A0 _TEXT	
-  FindEndWhile . . . . . . . . .	L Near	 000001A5 _TEXT	
-  Loop2  . . . . . . . . . . . .	L Near	 000001AC _TEXT	
-  Loop2EndIf . . . . . . . . . .	L Near	 000001F6 _TEXT	
-  PopCode  . . . . . . . . . . .	L Near	 00000205 _TEXT	
-  CodeLoop . . . . . . . . . . .	L Near	 00000208 _TEXT	
-  Return . . . . . . . . . . . .	L Near	 0000021A _TEXT	
+  FindEndWhile . . . . . . . . .	L Near	 000001AA _TEXT	
+  Loop2  . . . . . . . . . . . .	L Near	 000001B1 _TEXT	
+  Loop2EndIf . . . . . . . . . .	L Near	 000001FB _TEXT	
+  PopCode  . . . . . . . . . . .	L Near	 0000020A _TEXT	
+  CodeLoop . . . . . . . . . . .	L Near	 0000020D _TEXT	
+  Return . . . . . . . . . . . .	L Near	 0000021F _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -630,10 +631,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 0000021B _TEXT	Length= 000000B0 Public STDCALL
-  Interpret  . . . . . . . . . .	L Near	 00000266 _TEXT	
-  InitBuffer . . . . . . . . . .	L Near	 0000027A _TEXT	
-  InterpretBreak . . . . . . . .	L Near	 000002BF _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000220 _TEXT	Length= 000000B0 Public STDCALL
+  Interpret  . . . . . . . . . .	L Near	 0000026B _TEXT	
+  InitBuffer . . . . . . . . . .	L Near	 0000027F _TEXT	
+  InterpretBreak . . . . . . . .	L Near	 000002C4 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
