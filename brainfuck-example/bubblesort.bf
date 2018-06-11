@@ -5,23 +5,23 @@
 [>>>,------------------------------------------------]		; input until '0' and store a number every 3 bytes
 <<<									; switch back to the last input located
 
-[																	{ function bbsort }
-									; this function will move the smallest number to the first location
+[																	function {bbsort}
+									; {bbsort} will move the smallest number to the first location
 
 	<<<								; previous number
-	[																{ function swap }
+	[																function {swap}
 									; (0) (0) (A) (0) (0) (B)
 									; $0  $1  $2  $3  $4  $5
 									; Initial place = $5
 	
 		>>>							; next number
-		[															{ function Compare }						
+		[															function {Compare}						
 			-<<<-<+>				; dec A and B  inc $1
-			[>]						; go to next 0					{ function F1 }
+			[>]						; go to next 0					function {F1}
 			>>						; go right 2 bytes
 			
-									; if A>B: F1 stops at $3 leave loop at $5
-									; if A<=B: F1 stops at $2 leave loop at $4
+									; if A is bigger: {F1} stops at $3 leave loop at $5
+									; if B is bigger / equal: {F1} stops at $2 leave loop at $4
 									; $1 = min(A_B)
 		]
 		
@@ -32,7 +32,7 @@
 		
 		<<							; go to previous number
 		
-	]								; if there's a previous number: start function swap again at $2
+	]								; if there's a previous number: start {swap} again at $2
 									; else break
 	
 	>>>								; go to first number
