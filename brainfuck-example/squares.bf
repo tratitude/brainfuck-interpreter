@@ -35,7 +35,7 @@ ABS: abstracted value for calculating
 
 											; ASCII '0' == 48
 	[											function {PRINT} print every number exists in reverse order
-		[<++++++++<++>>-]+					; add #n1 8* #0			#n2 = 2 * #0					#0 = 1
+		[<++++++++<++>>-]+					; add #n1 8* #0				#n2 = 2 * #0				#0 = 1
 		<.<[>----<-]<						; output #n1				clear #n1 #n2				go to #n3
 	]											{PRINT} always stop at %4 (STP)
 
@@ -47,10 +47,10 @@ ABS: abstracted value for calculating
 		[											function {COMPUTE} make carry overs when triggering multiple times
 			>>>[-]+++++++++					; $3 = 9 (fill CHK)
 			<[>-<-]+++++++++>				; dec $3 $2	(get ABS)		$2 = 9	(fill NUM)			go to $3 (ABS)
-			[											function {INCREASE} stay at $3 if don't run: Check if this needs carry
+			[											function {INCREASE} only do this when it doesn't need carry
 				-[<->-]+					; $2 = add ( dec $2 $3 ) 1	(equals to "inc NUM 1")		$3 = 1
 				[<<<]						; go to previous number (LF won't be changed by this method)
-			]											{INCREASE} will always stop at %4 (STP)
+			]											{INCREASE} will always stop at %4 (STP): stay at $3 if don't run
 
 			<[>+<-]>						; add %3 to %4				%3 = 0	(clear TMP)			go to %4	{INCREASE}
 											; add $2 to $3				$2 = 0	(clear NUM)			go to $3	{NO INCREASE}
