@@ -6,7 +6,7 @@ INCLUDE Irvine32.inc
 ExitProcess PROTO, dwExitCode: DWORD
 
 .data
-MAX = 4096
+MAX = 250000
 inputHandle HANDLE ?
 fileName BYTE 80 DUP(?)
 buffer BYTE MAX DUP(?)	
@@ -35,11 +35,11 @@ SyntaxCheck proc
 	L1:
 		mov al,[esi]
 		.IF al=='['
-				inc dh
+				inc edx
 		.ELSEIF al==']'
-				inc dl
+				dec edx
 		.ENDIF
-		.IF dl>dh
+		.IF edx<0
 			jmp Err	
 		.ENDIF
 		
@@ -66,7 +66,7 @@ SyntaxCheck proc
 	loop L1
 	mov bl,0
 	mov [edi],bl
-	.IF dl!=dh
+	.IF edx!=0
 		Err:
 		mov edx,OFFSET ErrMsg
 		call WriteString
@@ -140,6 +140,7 @@ Loop1:
      .ELSEIF al == ','
           call ReadChar
 		  call writechar
+		  call crlf
           mov ebx, executeMemoryLocation
           mov[ebx], al
           jmp CodeLoop
